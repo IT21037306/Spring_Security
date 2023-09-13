@@ -1,8 +1,12 @@
 package com.example.springbootkeyclock.controller;
 
-import com.example.springbootkeyclock.model.Item;
 import com.example.springbootkeyclock.model.User;
 import com.example.springbootkeyclock.repository.UserRepo;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
+//Heading of API
+@Tag(name = "User Management")
+//Specify the token auth in swagger
+@SecurityRequirement(name = "bearerToken")
 @RestController
 @PreAuthorize("hasRole('client_admin')")
 @RequestMapping("/api/v1/admin")
@@ -20,11 +29,36 @@ public class AdminController {
     @Autowired
     private UserRepo userRepo;
 
+    @Operation(
+            description = "Add operation of User by Admin",
+            summary = "Summary of User POST endpoint",
+            responses = {
+                    @ApiResponse(
+                            description = "created",
+                            responseCode = "201"
+                    )
+            }
+    )
+
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody User user){
         return new ResponseEntity<User>(userRepo.save(user), HttpStatus.CREATED);
     }
 
+    @Operation(
+            description = "View operation of User by Admin",
+            summary = "Summary of User GET endpoint",
+            responses = {
+                    @ApiResponse(
+                            description = "found",
+                            responseCode = "302"
+                    ),
+                    @ApiResponse(
+                            description = "not-found",
+                            responseCode = "404"
+                    )
+            }
+    )
     @GetMapping("/users")
     public ResponseEntity<List<User>> displayUsers(){
         List<User> userList = userRepo.findAll();
@@ -36,9 +70,22 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    @Operation(
+            description = "Edit operation of User by Admin",
+            summary = "Summary of User PUT endpoint",
+            responses = {
+                    @ApiResponse(
+                            description = "created",
+                            responseCode = "201"
+                    ),
+                    @ApiResponse(
+                            description = "not-found",
+                            responseCode = "404"
+                    )
+            }
+    )
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateItem(@PathVariable Integer id, @RequestBody User user){
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user){
         Optional<User> newUser = userRepo.findById(id);
 
         if(newUser.isPresent()){
@@ -50,9 +97,22 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    @Operation(
+            description = "Delete operation of User by Admin",
+            summary = "Summary of User DELETE endpoint",
+            responses = {
+                    @ApiResponse(
+                            description = "ok",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "not-found",
+                            responseCode = "404"
+                    )
+            }
+    )
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Item> deleteItem(@PathVariable Integer id){
+    public ResponseEntity<User> deleteUser(@PathVariable Integer id){
         Optional<User> newUser = userRepo.findById(id);
 
         if(newUser.isPresent()){

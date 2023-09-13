@@ -1,4 +1,4 @@
-package com.example.springbootkeyclock.security;
+package com.example.springbootkeyclock.configs;
 
 import com.example.springbootkeyclock.middleware.JWTAuthConverter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
+
+
         //Make all request to authenticate
         httpSecurity
                 /*
@@ -38,10 +40,20 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                         //Authorize Client Request.
                         .authorizeHttpRequests(auth ->
+
                                 //For ,now we are accept any request those are authenticated
                                 //But we can specify the pattern also
-                                auth.anyRequest()
-                                        .authenticated());
+                                auth.requestMatchers(
+                                        "/v2/api-docs",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources",
+                                        "/swagger-resources/**",
+                                        "/configuration/ui",
+                                        "/swagger-ui/**",
+                                        "/webjars/**",
+                                        "/swagger-ui.html"
+                                        ).permitAll().anyRequest().authenticated()
+                                        );
 
         httpSecurity
                 //This is ,latest method
