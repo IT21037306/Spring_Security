@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                                 //For ,now we are accept any request those are authenticated
                                 //But we can specify the pattern also
                                 auth.requestMatchers(
+                                        "/login",
                                         "/v2/api-docs",
                                         "/v3/api-docs/**",
                                         "/swagger-resources",
